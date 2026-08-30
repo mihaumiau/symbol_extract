@@ -5,12 +5,13 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 
 #include "exception.hpp"
 
 int main(int argc, char* argv[]) {
-    if (argc < 5) {
-        std::cerr << "usage: .\\" << argv[0] << " <library_dir> <library_name> <symbol_server> [<symbol_name>...] <disassemble_out>" << std::endl;
+    if (argc < 5 || argc % 2 == 0) {
+        std::cerr << "usage: .\\" << argv[0] << " <library_dir> <library_name> <symbol_server> [<function_name> <disassembly_out>]... <out_dir>" << std::endl;
 
         return EXIT_FAILURE;
     }
@@ -130,9 +131,7 @@ int main(int argc, char* argv[]) {
 
     ULONG64 offset = 0;
 
-    for (int i = 4; i < argc - 1; i++) {
-        std::stringstream ss;
-
+    for (int i = 4; i < argc - 1; i += 2) {
         if (FAILED(result = symbols->GetOffsetByName(argv[i], &offset))) {
             std::cerr << "symbols->GetOffsetByName(...) failed: 0x" << std::hex << result << std::endl;
 
@@ -145,14 +144,16 @@ int main(int argc, char* argv[]) {
             return EXIT_FAILURE;
         }
 
-        CHAR symbolName[512];
-        ULONG symbolNameSize;
-        ULONG64 displacement;
-
-        CHAR line[512];
-        ULONG lineSize;
+        std::stringstream ss;
 
         while (true) {
+            CHAR symbolName[512];
+            ULONG symbolNameSize;
+            ULONG64 displacement;
+
+            CHAR line[512];
+            ULONG lineSize;
+
             if (FAILED(result = symbols->GetNameByOffset(offset, symbolName, sizeof(symbolName), &symbolNameSize, &displacement))) {
                 std::cerr << "control->GetNameByOffset(...) failed: 0x" << std::hex << result << std::endl;
 
@@ -165,7 +166,11 @@ int main(int argc, char* argv[]) {
                 return EXIT_FAILURE;
             }
 
+            std::cout << "iteration." << std::endl;
+
             if (strcmp(symbolName, argv[i]) != 0) {
+                std::cout << "broke on:" << symbolName << ", " << argv[i] << std::endl;
+
                 break;
             }
 
@@ -182,14 +187,18 @@ int main(int argc, char* argv[]) {
             }
 
             ss << line;
-            std::cout << line;
         }
 
-        std::string fileName = std::string(argv[argc - 1]) + "/" + argv[i] + ".txt";
-        std::ofstream file(fileName);
+        std::stringstream filePath;
+
+        filePath << std::string(argv[argc - 1]);
+        filePath << "\\";
+        filePath << argv[i + 1];
+
+        std::ofstream file(filePath.str());
 
         if (!file) {
-            std::cerr << "failed to open output file: " << fileName << std::endl;
+            std::cerr << "failed to open output file: " << filePath.str() << std::endl;
 
             client->EndSession(DEBUG_END_PASSIVE);
 
