@@ -174,7 +174,7 @@ int main(int argc, char* argv[]) {
                 break;
             }
 
-            if (FAILED(control->Disassemble(offset, DEBUG_DISASM_EFFECTIVE_ADDRESS, line, sizeof(line), &lineSize, &offset))) {
+            if (FAILED(control->Disassemble(offset, 0, line, sizeof(line), &lineSize, &offset))) {
                 std::cerr << "control->Disassemble(...) failed: 0x" << std::hex << result << std::endl;
 
                 client->EndSession(DEBUG_END_PASSIVE);
