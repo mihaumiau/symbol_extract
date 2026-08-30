@@ -166,11 +166,7 @@ int main(int argc, char* argv[]) {
                 return EXIT_FAILURE;
             }
 
-            std::cout << "iteration." << std::endl;
-
             if (strcmp(symbolName, argv[i]) != 0) {
-                std::cout << "broke on:" << symbolName << ", " << argv[i] << std::endl;
-
                 break;
             }
 
