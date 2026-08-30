@@ -1,6 +1,6 @@
 # symbol_extractor tool
 
-lets you disassemble and extract functions at scale off windows librarys.
+lets you disassemble and extract functions off windows librarys at scale.
 
 ## usage:
 
