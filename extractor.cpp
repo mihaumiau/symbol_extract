@@ -5,7 +5,6 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <algorithm>
 
 #include "exception.hpp"
 
