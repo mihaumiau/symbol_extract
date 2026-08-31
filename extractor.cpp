@@ -11,7 +11,7 @@
 
 int main(int argc, char* argv[]) {
     if (argc < 5 || argc % 2 == 0) {
-        std::cerr << "usage: .\\" << argv[0] << " <library_dir> <library_name> <symbol_server> [<function_name> <disassembly_out>]... <out_dir>" << std::endl;
+        std::cerr << "usage: .\\" << argv[0] << " <library_dir> <library_name> <symbol_path> [<function_name> <disassembly_out>]... <out_dir>" << std::endl;
 
         return EXIT_FAILURE;
     }
@@ -114,7 +114,6 @@ int main(int argc, char* argv[]) {
 
         return EXIT_FAILURE;
     }
-
 
     if (FAILED(result = symbols->Reload(argv[2]))) {
         std::cerr << "symbols->Reload(...) failed: 0x" << std::hex << result << std::endl;
